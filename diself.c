@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
         free(shdr);
         free(str_table);
         fclose(fd);
+        return 0;
     }
     if (ehdr->e_ident[EI_CLASS] == ELFCLASS32 && ehdr->e_machine == EM_386) {
         ehdr_32 = read_elf_header_32(fd);
@@ -76,11 +77,12 @@ int main(int argc, char *argv[])
         free(shdr_32);
         free(str_table);
         fclose(fd);
+        return 0;
     }     
     else {
         printf("%s: Unsupported target architecture\n", fileName);
         free(ehdr);
         fclose(fd);
+        return 0;
     }
-    return 0;
 }
