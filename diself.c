@@ -50,6 +50,11 @@ int main(int argc, char *argv[])
         }
 
         str_table = load_string_table(ehdr, shdr, fd);
+        
+        if (str_table == NULL) {
+            printf("Can't load string table\n");
+            exit(EXIT_FAILURE);
+        }
 
         elf_disasm(ehdr,shdr,str_table, data);
     
@@ -70,7 +75,12 @@ int main(int argc, char *argv[])
 
         str_table = load_string_table_32(ehdr_32, shdr_32, fd);
 
-        elf_disasm_32(ehdr_32,shdr_32,str_table, data);
+        if (str_table == NULL) {
+            printf("Can't load string table\n");
+            exit(EXIT_FAILURE);
+        }
+
+        elf_disasm_32(ehdr_32, shdr_32, str_table, data);
 
         free(ehdr);
         free(ehdr_32);

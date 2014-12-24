@@ -110,11 +110,19 @@ Elf32_Shdr *read_section_header_32(Elf32_Ehdr *ehdr, FILE *fd)
 char *load_string_table(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr_table, FILE *fd)
 {
     Elf64_Shdr *shdr = shdr_table + ehdr->e_shstrndx;
-    char *string_table;
+    //char *string_table;
 
-    string_table = (char *) malloc(shdr->sh_size);
-    fseek(fd, shdr->sh_offset, SEEK_SET);
-    fread(string_table, shdr->sh_size, 1, fd);
+    char *string_table = malloc(shdr->sh_size);
+
+    if (fseek(fd, shdr->sh_offset, SEEK_SET) != 0) {
+        free(string_table);
+        return NULL;
+    }
+
+    if (fread(string_table, shdr->sh_size, 1, fd) != 1) {
+        free(string_table);
+        return NULL;
+    }
 
     return string_table;
 }
@@ -122,11 +130,19 @@ char *load_string_table(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr_table, FILE *fd)
 char *load_string_table_32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr_table, FILE *fd)
 {
     Elf32_Shdr *shdr = shdr_table + ehdr->e_shstrndx;
-    char *string_table;
+    //char *string_table;
 
-    string_table = (char *) malloc(shdr->sh_size);
-    fseek(fd, shdr->sh_offset, SEEK_SET);
-    fread(string_table, shdr->sh_size, 1, fd);
+    char *string_table = malloc(shdr->sh_size);
+
+    if (fseek(fd, shdr->sh_offset, SEEK_SET) != 0) {
+        free(string_table);
+        return NULL;
+    }
+
+    if (fread(string_table, shdr->sh_size, 1, fd) != 1) {
+        free(string_table);
+        return NULL;
+    }
 
     return string_table;
 }
