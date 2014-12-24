@@ -1,5 +1,5 @@
 # capstone library name (without prefix 'lib' and suffix '.so')
-CC = clang
+
 LIBNAME = capstone
 
 diself: diself.o disassemble.o

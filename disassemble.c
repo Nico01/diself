@@ -166,7 +166,8 @@ void elf_disasm(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t *da
         while(cs_disasm_iter(handle, &code, &size, &address, insn)) {
 			printf("0x%"PRIx64":\t%s\t\t%s\n",
                     insn->address, insn->mnemonic, insn->op_str);
-        }        
+        }
+        cs_free(insn, 1);
     }
     cs_close(&handle);
 }
@@ -206,7 +207,8 @@ void elf_disasm_32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t 
         while(cs_disasm_iter(handle, &code, &size, &address, insn)) {
 			printf("0x%"PRIx64":\t%s\t\t%s\n",
                     insn->address, insn->mnemonic, insn->op_str);
-        }        
+        }
+        cs_free(insn, 1);
     }
     cs_close(&handle);
 }
