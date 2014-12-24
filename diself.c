@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/mman.h>
 
 #include "disassemble.h"
+#include "elf_32.h"
+#include "elf_64.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -30,7 +32,7 @@ int main(int argc, char *argv[])
 
     uint8_t *data = mmap(NULL, file_size(fileName), PROT_READ, MAP_SHARED, fileno(fd), 0);
 
-    ehdr = read_elf_header(fd);
+    ehdr = read_elf_header_64(fd);
     
     if (ehdr == NULL) {
         printf("%s: File format not recognized\n", fileName);
@@ -38,21 +40,21 @@ int main(int argc, char *argv[])
     }
 
     if (ehdr->e_ident[EI_CLASS] == ELFCLASS64 && ehdr->e_machine == EM_X86_64) {
-        shdr = read_section_header(ehdr, fd);
+        shdr = read_section_header_64(ehdr, fd);
     
         if (shdr == NULL) {
             printf("Can't read section header\n");
             exit(EXIT_FAILURE);
         }
 
-        str_table = load_string_table(ehdr, shdr, fd);
+        str_table = load_string_table_64(ehdr, shdr, fd);
         
         if (str_table == NULL) {
             printf("Can't load string table\n");
             exit(EXIT_FAILURE);
         }
 
-        elf_disasm(ehdr,shdr,str_table, data);
+        elf_disasm_64(ehdr,shdr,str_table, data);
     
         free(ehdr);
         free(shdr);

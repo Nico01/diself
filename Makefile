@@ -1,12 +1,13 @@
 # capstone library name (without prefix 'lib' and suffix '.so')
-
+#CC = clang
+CFLAGS = -Wall -O2
 LIBNAME = capstone
 
-diself: diself.o disassemble.o
-	${CC} $^ -O3 -Wall -l$(LIBNAME) -o $@
+diself: diself.o disassemble.o elf_64.o elf_32.o
+	${CC} ${CFLAGS} $^ -O3 -Wall -l$(LIBNAME) -o $@
 
 %.o: %.c
-	${CC} -c $^ -o $@
+	${CC} ${CFLAGS} -c $^ -o $@
 
 clean:
 	rm *.o diself
