@@ -1,4 +1,3 @@
-#include <elf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +7,8 @@
 
 #include "disassemble.h"
 
-size_t file_size(const char *fileName) {
+size_t file_size(const char *fileName)
+{
     struct stat st; 
 
     if (stat(fileName, &st) == 0)
@@ -19,7 +19,7 @@ size_t file_size(const char *fileName) {
 
 Elf64_Ehdr *read_elf_header(FILE *fd)
 {
-    Elf64_Ehdr *ehdr = (Elf64_Ehdr *) malloc(sizeof(Elf64_Ehdr));
+    Elf64_Ehdr *ehdr = malloc(sizeof(Elf64_Ehdr));
 
     if (fseek(fd, 0, SEEK_SET) != 0) {
         free(ehdr);
@@ -46,7 +46,7 @@ Elf64_Ehdr *read_elf_header(FILE *fd)
 
 Elf32_Ehdr *read_elf_header_32(FILE *fd)
 {
-    Elf32_Ehdr *ehdr = (Elf32_Ehdr *) malloc(sizeof(Elf32_Ehdr));
+    Elf32_Ehdr *ehdr = malloc(sizeof(Elf32_Ehdr));
 
     if (fseek(fd, 0, SEEK_SET) != 0) {
         free(ehdr);
@@ -74,7 +74,7 @@ Elf32_Ehdr *read_elf_header_32(FILE *fd)
 Elf64_Shdr *read_section_header(Elf64_Ehdr *ehdr, FILE *fd)
 {
     size_t size = ehdr->e_shnum * ehdr->e_shentsize;
-    Elf64_Shdr *shdr = (Elf64_Shdr *) malloc(size);
+    Elf64_Shdr *shdr = malloc(size);
 
     if (fseek(fd, ehdr->e_shoff, SEEK_SET) != 0) {
         free(shdr);
@@ -92,7 +92,7 @@ Elf64_Shdr *read_section_header(Elf64_Ehdr *ehdr, FILE *fd)
 Elf32_Shdr *read_section_header_32(Elf32_Ehdr *ehdr, FILE *fd)
 {
     size_t size = ehdr->e_shnum * ehdr->e_shentsize;
-    Elf32_Shdr *shdr = (Elf32_Shdr *) malloc(size);
+    Elf32_Shdr *shdr = malloc(size);
 
     if (fseek(fd, ehdr->e_shoff, SEEK_SET) != 0) {
         free(shdr);
@@ -110,8 +110,6 @@ Elf32_Shdr *read_section_header_32(Elf32_Ehdr *ehdr, FILE *fd)
 char *load_string_table(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr_table, FILE *fd)
 {
     Elf64_Shdr *shdr = shdr_table + ehdr->e_shstrndx;
-    //char *string_table;
-
     char *string_table = malloc(shdr->sh_size);
 
     if (fseek(fd, shdr->sh_offset, SEEK_SET) != 0) {
@@ -130,8 +128,6 @@ char *load_string_table(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr_table, FILE *fd)
 char *load_string_table_32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr_table, FILE *fd)
 {
     Elf32_Shdr *shdr = shdr_table + ehdr->e_shstrndx;
-    //char *string_table;
-
     char *string_table = malloc(shdr->sh_size);
 
     if (fseek(fd, shdr->sh_offset, SEEK_SET) != 0) {
@@ -154,9 +150,9 @@ void elf_disasm(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t *da
     size_t size;
     
     csh handle = 0;
-	uint64_t address;
-	cs_insn *insn;
-	const uint8_t *code;
+    uint64_t address;
+    cs_insn *insn;
+    const uint8_t *code;
 
     for (i = 0; i < ehdr->e_shnum; i++) {        
         if ((strcmp(&str_table[shdr[i].sh_name], ".text")) == 0) {
@@ -164,11 +160,12 @@ void elf_disasm(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t *da
             size = shdr[i].sh_size;
         }
     }
-    
+
     if (cs_open(CS_ARCH_X86, CS_MODE_64, &handle) != CS_ERR_OK) {
         printf("ERROR: Failed to initialize engine!\n");
         exit(EXIT_FAILURE);
     }
+
     cs_option(handle, CS_OPT_SKIPDATA, CS_OPT_ON);
     cs_option(handle, CS_OPT_SYNTAX, CS_OPT_SYNTAX_ATT);   
 
@@ -180,8 +177,7 @@ void elf_disasm(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t *da
         insn = cs_malloc(handle);
 
         while(cs_disasm_iter(handle, &code, &size, &address, insn)) {
-			printf("0x%"PRIx64":\t%s\t\t%s\n",
-                    insn->address, insn->mnemonic, insn->op_str);
+            printf("0x%"PRIx64":\t%s\t\t%s\n", insn->address, insn->mnemonic, insn->op_str);
         }
         cs_free(insn, 1);
     }
@@ -195,9 +191,9 @@ void elf_disasm_32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t 
     size_t size;
     
     csh handle = 0;
-	uint64_t address;
-	cs_insn *insn;
-	const uint8_t *code;
+    uint64_t address;
+    cs_insn *insn;
+    const uint8_t *code;
 
     for (i = 0; i < ehdr->e_shnum; i++) {        
         if ((strcmp(&str_table[shdr[i].sh_name], ".text")) == 0) {
@@ -205,11 +201,12 @@ void elf_disasm_32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t 
             size = shdr[i].sh_size;
         }
     }
-    
+
     if (cs_open(CS_ARCH_X86, CS_MODE_32, &handle) != CS_ERR_OK) {
         printf("ERROR: Failed to initialize engine!\n");
         exit(EXIT_FAILURE);
     }
+
     cs_option(handle, CS_OPT_SKIPDATA, CS_OPT_ON);
     cs_option(handle, CS_OPT_SYNTAX, CS_OPT_SYNTAX_ATT);   
 
@@ -221,8 +218,7 @@ void elf_disasm_32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t 
         insn = cs_malloc(handle);
 
         while(cs_disasm_iter(handle, &code, &size, &address, insn)) {
-			printf("0x%"PRIx64":\t%s\t\t%s\n",
-                    insn->address, insn->mnemonic, insn->op_str);
+			printf("0x%"PRIx64":\t%s\t\t%s\n", insn->address, insn->mnemonic, insn->op_str);
         }
         cs_free(insn, 1);
     }

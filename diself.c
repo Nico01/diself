@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <elf.h>
 #include <sys/mman.h>
 
 #include "disassemble.h"
@@ -14,10 +13,7 @@ int main(int argc, char *argv[])
     }
     
     FILE *fd;
-    
     char *fileName = argv[1];
-
-    uint8_t *data;
 
     Elf64_Ehdr *ehdr = NULL; /* ELF header */
     Elf64_Shdr *shdr = NULL; /* Section header */
@@ -32,7 +28,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    data = mmap(NULL, file_size(fileName), PROT_READ, MAP_SHARED, fileno(fd), 0);
+    uint8_t *data = mmap(NULL, file_size(fileName), PROT_READ, MAP_SHARED, fileno(fd), 0);
 
     ehdr = read_elf_header(fd);
     
@@ -64,6 +60,7 @@ int main(int argc, char *argv[])
         fclose(fd);
         return 0;
     }
+
     if (ehdr->e_ident[EI_CLASS] == ELFCLASS32 && ehdr->e_machine == EM_386) {
         ehdr_32 = read_elf_header_32(fd);
         shdr_32 = read_section_header_32(ehdr_32, fd);
@@ -88,7 +85,8 @@ int main(int argc, char *argv[])
         free(str_table);
         fclose(fd);
         return 0;
-    }     
+    }
+     
     else {
         printf("%s: Unsupported target architecture\n", fileName);
         free(ehdr);
