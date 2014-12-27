@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    if (ehdr->e_ident[EI_CLASS] == ELFCLASS64 && ehdr->e_machine == EM_X86_64) {
+    if (ehdr->e_ident[EI_CLASS] == ELFCLASS64) {
         shdr = read_section_header_64(ehdr, fd);
     
         if (shdr == NULL) {
@@ -54,7 +54,16 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        elf_disasm_64(ehdr,shdr,str_table, data);
+        if (ehdr->e_machine == EM_X86_64) {
+            printf("ELF x86-64\n");
+            elf_disasm_x86_64(ehdr,shdr,str_table, data);
+        }
+        if (ehdr->e_machine == EM_ARM) {
+            printf("ELF ARM64\n");
+            elf_disasm_arm64(ehdr,shdr,str_table, data);
+        }
+        else
+            printf("%s: Unsupported target architecture\n", fileName);
     
         free(ehdr);
         free(shdr);
@@ -63,7 +72,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (ehdr->e_ident[EI_CLASS] == ELFCLASS32 && ehdr->e_machine == EM_386) {
+    if (ehdr->e_ident[EI_CLASS] == ELFCLASS32) {
         ehdr_32 = read_elf_header_32(fd);
         shdr_32 = read_section_header_32(ehdr_32, fd);
     
@@ -79,7 +88,16 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        elf_disasm_32(ehdr_32, shdr_32, str_table, data);
+        if (ehdr->e_machine == EM_386) {
+            printf("ELF x86\n");
+            elf_disasm_x86(ehdr_32, shdr_32, str_table, data);
+        }
+        if (ehdr->e_machine == EM_ARM) {
+            printf("ELF ARM32\n");
+            elf_disasm_arm32(ehdr_32, shdr_32, str_table, data);
+        }
+        else
+            printf("%s: Unsupported target architecture\n", fileName);
 
         free(ehdr);
         free(ehdr_32);
@@ -88,7 +106,7 @@ int main(int argc, char *argv[])
         fclose(fd);
         return 0;
     }
-     
+
     else {
         printf("%s: Unsupported target architecture\n", fileName);
         free(ehdr);

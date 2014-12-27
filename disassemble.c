@@ -46,7 +46,7 @@ void disasm(uint64_t addr, uint32_t offset, size_t size, cs_arch arch, cs_mode m
     cs_close(&handle);
 }
 
-void elf_disasm_64(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t *data)
+void elf_disasm_x86_64(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t *data)
 {
     uint32_t offset = get_section_offset_64(ehdr, shdr, str_table, ".text");
     size_t size = get_section_size_64(ehdr, shdr, str_table, ".text");
@@ -54,10 +54,26 @@ void elf_disasm_64(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t 
     disasm(ehdr->e_entry, offset, size, CS_ARCH_X86, CS_MODE_64, data);
 }
 
-void elf_disasm_32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t *data)
+void elf_disasm_x86(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t *data)
 {
     uint32_t offset = get_section_offset_32(ehdr, shdr, str_table, ".text");
     size_t size = get_section_size_32(ehdr, shdr, str_table, ".text");
 
     disasm(ehdr->e_entry, offset, size, CS_ARCH_X86, CS_MODE_32, data);
+}
+
+void elf_disasm_arm64(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t *data)
+{
+    uint32_t offset = get_section_offset_64(ehdr, shdr, str_table, ".text");
+    size_t size = get_section_size_64(ehdr, shdr, str_table, ".text");
+
+    disasm(ehdr->e_entry, offset, size, CS_ARCH_ARM64, CS_MODE_ARM, data);
+}
+
+void elf_disasm_arm32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t *data)
+{
+    uint32_t offset = get_section_offset_32(ehdr, shdr, str_table, ".text");
+    size_t size = get_section_size_32(ehdr, shdr, str_table, ".text");
+
+    disasm(ehdr->e_entry, offset, size, CS_ARCH_ARM, CS_MODE_ARM, data);
 }
