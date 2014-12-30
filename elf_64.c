@@ -49,17 +49,17 @@ Elf64_Shdr *read_section_header_64(Elf64_Ehdr *ehdr, FILE *fd)
     return shdr;
 }
 
-char *load_string_table_64(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr_table, FILE *fd)
+char *load_string_table_64(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, FILE *fd)
 {
-    Elf64_Shdr *shdr = shdr_table + ehdr->e_shstrndx;
-    char *string_table = malloc(shdr->sh_size);
+    Elf64_Shdr *shdr_table = shdr + ehdr->e_shstrndx;
+    char *string_table = malloc(shdr_table->sh_size);
 
-    if (fseek(fd, shdr->sh_offset, SEEK_SET) != 0) {
+    if (fseek(fd, shdr_table->sh_offset, SEEK_SET) != 0) {
         free(string_table);
         return NULL;
     }
 
-    if (fread(string_table, shdr->sh_size, 1, fd) != 1) {
+    if (fread(string_table, shdr_table->sh_size, 1, fd) != 1) {
         free(string_table);
         return NULL;
     }
