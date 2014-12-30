@@ -1,3 +1,6 @@
+#ifndef DISASSEMBLE_H
+#define DISASSEMBLE_H
+
 #include <elf.h>
 #include <stdlib.h>
 #include <capstone/capstone.h>
@@ -13,3 +16,5 @@ void elf_disasm_x86(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t
 void elf_disasm_arm64(Elf64_Ehdr *ehdr, Elf64_Shdr *shdr, char *str_table, uint8_t *data);
 
 void elf_disasm_arm32(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr, char *str_table, uint8_t *data);
+
+#endif /* DISASSEMBLE_H */

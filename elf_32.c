@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "elf_32.h"
+#include "elf_parser.h"
 
 Elf32_Ehdr *read_elf_header_32(FILE *fd)
 {

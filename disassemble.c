@@ -4,8 +4,7 @@
 #include <inttypes.h>
 
 #include "disassemble.h"
-#include "elf_32.h"
-#include "elf_64.h"
+#include "elf_parser.h"
 
 size_t file_size(const char *fileName)
 {

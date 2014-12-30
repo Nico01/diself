@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "elf_64.h"
+#include "elf_parser.h"
 
 Elf64_Ehdr *read_elf_header_64(FILE *fd)
 {

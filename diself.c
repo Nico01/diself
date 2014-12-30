@@ -3,8 +3,7 @@
 #include <sys/mman.h>
 
 #include "disassemble.h"
-#include "elf_32.h"
-#include "elf_64.h"
+#include "elf_parser.h"
 
 
 int main(int argc, char *argv[])
